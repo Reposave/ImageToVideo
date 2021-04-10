@@ -74,7 +74,14 @@ int main (int argc, char *argv[])
 	
 	std::cout << widths <<" "<< heights << " " << "columns" << std::endl;
 	
-	unsigned char array[heights][widths];
+	unsigned char ** array = nullptr;
+	
+	if((array = new unsigned char*[heights])!= nullptr){
+		for(int i=0; i<heights; ++i){
+			if((array[i] = new unsigned char[widths]) == nullptr)
+				{std::cerr << "Allocation error!"; break;}
+		}
+	}
 	
 	//ss << infile.rdbuf();
 	
@@ -90,29 +97,34 @@ int main (int argc, char *argv[])
     
     infile.close();
     //print array
-    
-    //std::ofstream outfile("Images/out_"+filename,std::ios_base::binary);
+
     FILE* outfile;
     
-    outfile = fopen("ouy.pgm", "wb");
+    std::string out = "Images/out_"+filename;
+    outfile = fopen(out.c_str(), "wb");
     
     fprintf(outfile, "P5\n"); 
     fprintf(outfile,"# Created using extractor program.\n");
     fprintf(outfile, "%d %d\n", widths, heights); 
     fprintf(outfile, "255\n"); 
-    
-    /*outfile << "P5\n" << "# Created using extractor program.\n" << rows << " " << columns << "\n" << "255 \n";*/ 
+
     
   for(int row = 0; row < heights; row++) {
     for(int col = 0; col < widths; col++) {
     		fwrite(&array[row][col], 1,1,outfile);
-      //outfile.write(reinterpret_cast<char*> (array[row][col]),rows*columns*sizeof(unsigned char));
       }
-      
-      //fwrite("\n",1,1,outfile);
     }
+  	
+ 	DLMARD001::FrameSequence myVideoFrames;
   
-  
+  	myVideoFrames.myMethod(1);
+  	
+  	myVideoFrames.AddFrame(static_cast<unsigned char **>(array));
+  	
+  	for(int i =0; i< heights; ++i)
+  	{ delete [] array[i]; }
+  	
+  	delete [] array;
 }
 void readFile(std::string file){
    //
