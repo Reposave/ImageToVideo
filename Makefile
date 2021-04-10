@@ -21,3 +21,9 @@ clean:
 install:
   
 	@mv extractor ~/bin
+	
+run:
+	./extractor larger_image.pgm -t 0 10 5000 5000 -s 640 480 -w invert invseq -w none sequence2
+
+run1:
+	./extractor sloan_image.pgm -t 0 10 5000 5000 -s 640 480 -w invert invseq -w none sequence2

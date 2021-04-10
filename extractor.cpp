@@ -4,9 +4,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <stdio.h>
 
-int rows = 0;
-int columns= 0;
+int widths = 0;
+int heights = 0;
 
 int buffsize = 80;
 
@@ -36,7 +37,7 @@ int main (int argc, char *argv[])
 	std::string line;
 	std::string previous; //Stores the previous line after an iteration.
 	
-   	std::ifstream infile("Images/"+filename);
+   	std::ifstream infile("Images/"+filename,std::ios_base::binary);
 	std::stringstream ss;
 	
 	char buff[buffsize];
@@ -55,13 +56,13 @@ int main (int argc, char *argv[])
 	
 	getline(infile, line);//Go to next line with Binary data.
 
-	std::cout << previous << std::endl;
+	//std::cout << previous << std::endl;
 	
 	ss.clear();
 	ss << previous;
 	
-	ss >> rows;
-	ss >> columns;
+	ss >> widths;
+	ss >> heights;
 	
 	//ss.getline(buff, 10,' ');
 	
@@ -71,29 +72,56 @@ int main (int argc, char *argv[])
 	
 	//columns = atoi(buff);
 	
-	std::cout << rows <<" "<< columns << " " << "columns" << std::endl;
+	std::cout << widths <<" "<< heights << " " << "columns" << std::endl;
 	
-	char array[rows][columns];
+	unsigned char array[heights][widths];
 	
-	ss << infile.rdbuf();
+	//ss << infile.rdbuf();
 	
-	for(int row = 0; row < rows; ++row){
-		for (int col = 0; col < columns; ++col){
-				ss >> array[row][col];
+	char b;
+	
+	for(int row = 0; row < heights; row++){
+		for (int col = 0; col < widths; col++){
+				infile.get(b);
+				//ss >> array[row][col];
+				array[row][col] = b;
+				}
 			}
-    }
     
     infile.close();
-    ss.clear();
     //print array
-  for(int row = 0; row < rows; ++row) {
-    for(int col = 0; col < columns; ++col) {
-      std::cout << array[row][col] << " ";
+    
+    //std::ofstream outfile("Images/out_"+filename,std::ios_base::binary);
+    FILE* outfile;
+    
+    outfile = fopen("ouy.pgm", "wb");
+    
+    fprintf(outfile, "P5\n"); 
+    fprintf(outfile,"# Created using extractor program.\n");
+    fprintf(outfile, "%d %d\n", widths, heights); 
+    fprintf(outfile, "255\n"); 
+    
+    /*outfile << "P5\n" << "# Created using extractor program.\n" << rows << " " << columns << "\n" << "255 \n";*/ 
+    
+  for(int row = 0; row < heights; row++) {
+    for(int col = 0; col < widths; col++) {
+    		fwrite(&array[row][col], 1,1,outfile);
+      //outfile.write(reinterpret_cast<char*> (array[row][col]),rows*columns*sizeof(unsigned char));
+      }
+      
+      //fwrite("\n",1,1,outfile);
     }
-    std::cout << std::endl;
-  }
+  
   
 }
 void readFile(std::string file){
    //
    }
+/*void Invert(unsigned char * Arr){
+	for(int row = 0; row < rows; ++row){
+		for (int col = 0; col < columns; ++col){
+				Arr[row][col] = 255 - *Arr[row][col];
+				
+			}
+    }
+}*/
