@@ -83,8 +83,8 @@ int main (int argc, char *argv[])
     		
     	}else if(w[i] == "revinvert"){
     		std::cout << "revinvert"<< std::endl;
-    		//myVideoFrames.invertAddFrame();
-    		//myVideoFrames.reverseExportFrames(w[i+1]);
+    		myVideoFrames.invertAddFrame();
+    		myVideoFrames.reverseExportFrames(w[i+1]);
     	}
 	}
   	
