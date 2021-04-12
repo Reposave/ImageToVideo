@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
+#include <iomanip>
 
 void DLMARD001::FrameSequence::myMethod(int maxSpeed) {
 	std::cout << "Hello World!";
@@ -15,13 +16,9 @@ void DLMARD001::FrameSequence::AddFrame(unsigned char** frame) {
 }
 DLMARD001::FrameSequence::FrameSequence(int x, int y, int x2, int y2, int width, int height){
 	this->x=x;
-	std::cout << "x is" << x << std::endl;
 	this->y=y;
-	std::cout << "y is" << y << std::endl;
 	this->x2 = x2;
-	std::cout << "x2 is" << x2 << std::endl;
 	this->y2 = y2;
-	std::cout << "y2 is" << y2 << std::endl;
 	this->width = width;
 	this->height = height;
 }
@@ -51,7 +48,6 @@ void DLMARD001::FrameSequence::noneAddFrame(){
 			
 			//Create video sequence.
 			while(fx < x2 && fy < y2){
-				std::cout << "hello" << std::endl;
 					int v1 = 0;
 					int h1 = 0;
 					
@@ -63,12 +59,13 @@ void DLMARD001::FrameSequence::noneAddFrame(){
 							
 							h1++;
 							}
-						std::cout << h1 << std::endl;
+							std::cout << h1 << std::endl;
 						h1 = 0;	
 						v1++;	
 					}
 					std::cout << v1 << std::endl;
 					v1 = 0;
+					
 					DLMARD001::FrameSequence::AddFrame(static_cast<unsigned char **>(frame));
 					frame = nullptr;
 					
@@ -86,12 +83,19 @@ void DLMARD001::FrameSequence::noneAddFrame(){
 	
 	}
 	
+	
 void DLMARD001::FrameSequence::noneExportFrames(std::string outputName){
 
+	std::stringstream ss;
+	std::string number;
+	
 	for(std::vector<unsigned char **>::size_type i = 0; i != imageSequence.size(); i++) {
 		FILE* outfile;
 		
-		std::string out = "Frames/" + std::to_string(i) +"out_" + outputName;
+		ss << std::setw(4) << std::setfill('0') << i;
+		ss >> number;
+		
+		std::string out = "Frames/" + outputName + "-" + number+ ".pgm";
 		outfile = fopen(out.c_str(), "wb");
 		
 		fprintf(outfile, "P5\n"); 
@@ -105,7 +109,117 @@ void DLMARD001::FrameSequence::noneExportFrames(std::string outputName){
 				fwrite(&imageSequence[i][row][col], 1,1,outfile);
 		  }
 		}
+		
+		ss.clear();
+		
 	}
+	
+	for(std::vector<unsigned char **>::size_type i = 0; i != imageSequence.size(); i++) {
+		unsigned char** m = imageSequence[i];
+		for(int j =0; j< height; ++j)
+		  	{ delete [] m[j]; }
+		  	
+		  	delete [] m;
+	}
+	imageSequence.clear();
+}
+void DLMARD001::FrameSequence::invertAddFrame(){
+			unsigned char ** frame = nullptr;
+			
+			if((frame = new unsigned char*[height])!= nullptr){
+				for(int i=0; i<height; ++i){
+					if((frame[i] = new unsigned char[width]) == nullptr)
+						{std::cerr << "Allocation error!"; break;}
+				}
+			}
+			
+			//frame's starting point for each frame.
+			int fx = x;
+			int fy = y;
+			
+			//set boundaries to avoid seg faults.
+			if(y2 > imageHeight){
+				y2 = imageHeight - height; //This part may cause problems if the code has to be continuously looped for different fucntions.
+			}
+			if(x2 > imageWidth){
+				x2 = imageWidth - width;
+			}
+			std::cout << "Creating a video sequence." << std::endl;
+			
+			//Create video sequence.
+			while(fx < x2 && fy < y2){
+					int v1 = 0;
+					int h1 = 0;
+					
+					for(int i = fy; i< fy + height; i++){
+						
+						for(int j = fx; j< fx + width ; j++){
+							
+							frame[v1][h1] =255 - static_cast<unsigned char>(array[i][j]);
+							
+							h1++;
+							}
+						h1 = 0;	
+						v1++;	
+					}
+					v1 = 0;
+					
+					DLMARD001::FrameSequence::AddFrame(static_cast<unsigned char **>(frame));
+					frame = nullptr;
+					
+					if((frame = new unsigned char*[height])!= nullptr){
+						for(int i=0; i<height; ++i){
+							if((frame[i] = new unsigned char[width]) == nullptr)
+								{std::cerr << "Allocation error!"; break;}
+						}
+					}
+					
+					//next frame
+					fx++;
+					fy++;
+			}
+	
+	}
+
+void DLMARD001::FrameSequence::reverseExportFrames(std::string outputName){
+
+	std::stringstream ss;
+	std::string number;
+	
+	int s = 0;
+	for(int i = imageSequence.size() - 1 ; i >= 0; i--) {
+		
+		FILE* outfile;
+		
+		ss << std::setw(4) << std::setfill('0') << s;
+		ss >> number;
+		
+		std::string out = "Frames/" + outputName + "-" + number+ ".pgm";
+		outfile = fopen(out.c_str(), "wb");
+		
+		fprintf(outfile, "P5\n"); 
+		fprintf(outfile,"# Created using extractor program.\n");
+		fprintf(outfile, "%d %d\n", width, height); 
+		fprintf(outfile, "255\n"); 
+
+
+	  for(int row = 0; row < height; row++) {
+		for(int col = 0; col < width; col++) {
+				fwrite(&imageSequence[i][row][col], 1,1,outfile);
+		  }
+		}
+		s++;
+		ss.clear();
+		
+	}
+	for(std::vector<unsigned char **>::size_type i = 0; i != imageSequence.size(); i++) {
+		unsigned char** m = imageSequence[i];
+		for(int j =0; j< height; ++j)
+		  	{ delete [] m[j]; }
+		  	
+		  	delete [] m;
+	}
+	imageSequence.clear();
 }
 
 void DLMARD001::FrameSequence::ExportOriginalImage(std::string filename){
@@ -157,7 +271,7 @@ void DLMARD001::FrameSequence::BuildArray(std::string filename){
 	ss >> imageWidth;
 	ss >> imageHeight;
 	
-	std::cout << imageWidth <<" "<< imageHeight << " " << "columns" << std::endl;
+	//std::cout << imageWidth <<" "<< imageHeight << " " << "columns" << std::endl;
 	
 	if((array = new unsigned char*[imageHeight])!= nullptr){
 		for(int i=0; i<imageHeight; ++i){

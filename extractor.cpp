@@ -68,45 +68,26 @@ int main (int argc, char *argv[])
     	
     	if(w[i] == "invert"){
     		std::cout << "invert" << std::endl;
+    		myVideoFrames.invertAddFrame();
+    		myVideoFrames.noneExportFrames(w[i+1]);
     		
     	}else if(w[i] == "reverse"){
     		std::cout << "reverse"<< std::endl;
+    		//myVideoFrames.noneAddFrame();
+    		//myVideoFrames.reverseExportFrames(w[i+1]);
     		
     	}else if(w[i] == "none"){
     		std::cout << "none"<< std::endl;
     		myVideoFrames.noneAddFrame();
-    		myVideoFrames.noneExportFrames(filename);
-    		std::cout << "Cool";
+    		myVideoFrames.noneExportFrames(w[i+1]);
     		
     	}else if(w[i] == "revinvert"){
     		std::cout << "revinvert"<< std::endl;
+    		//myVideoFrames.invertAddFrame();
+    		//myVideoFrames.reverseExportFrames(w[i+1]);
     	}
 	}
   	
   	
   	
 }
-void readFile(std::string file){
-   //
-   }
-void noneOutput(){
-	
-}
-void reverseOutput(){
-
-}
-void invertOutput(){
-
-}
-
-void noneCreateFrames(int h, int w){
-	
-}
-/*void Invert(unsigned char * Arr){
-	for(int row = 0; row < rows; ++row){
-		for (int col = 0; col < columns; ++col){
-				Arr[row][col] = 255 - *Arr[row][col];
-				
-			}
-    }
-}*/

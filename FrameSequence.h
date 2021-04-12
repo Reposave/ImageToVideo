@@ -32,6 +32,8 @@ namespace DLMARD001{
 		void AddFrame(unsigned char** frame);
 		void noneAddFrame();
 		void noneExportFrames(std::string outputName);
+		void invertAddFrame();
+		void reverseExportFrames(std::string outputName);
 		void ExportOriginalImage(std::string filename);
 		void BuildArray(std::string filename);
 		
