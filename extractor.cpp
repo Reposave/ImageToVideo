@@ -63,26 +63,22 @@ int main (int argc, char *argv[])
     //myVideoFrames.ExportOriginalImage(filename);
     
     for(std::vector<std::string>::size_type i = 0; i != w.size(); i=i+2) {
-    	std::cout << w[i];
-    	std::cout << w[i+1];
+    	std::cout << "Function: " << w[i] << std::endl;
+    	std::cout << "OutputName: "<< w[i+1] << std::endl;
     	
     	if(w[i] == "invert"){
-    		std::cout << "invert" << std::endl;
     		myVideoFrames.invertAddFrame();
     		myVideoFrames.noneExportFrames(w[i+1]);
     		
     	}else if(w[i] == "reverse"){
-    		std::cout << "reverse"<< std::endl;
     		myVideoFrames.noneAddFrame();
     		myVideoFrames.reverseExportFrames(w[i+1]);
     		
     	}else if(w[i] == "none"){
-    		std::cout << "none"<< std::endl;
     		myVideoFrames.noneAddFrame();
     		myVideoFrames.noneExportFrames(w[i+1]);
     		
     	}else if(w[i] == "revinvert"){
-    		std::cout << "revinvert"<< std::endl;
     		myVideoFrames.invertAddFrame();
     		myVideoFrames.reverseExportFrames(w[i+1]);
     	}

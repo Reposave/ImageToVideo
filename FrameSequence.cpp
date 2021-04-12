@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <iomanip>
+#include <cmath>
 
 void DLMARD001::FrameSequence::myMethod(int maxSpeed) {
 	std::cout << "Hello World!";
@@ -34,36 +35,116 @@ void DLMARD001::FrameSequence::noneAddFrame(){
 			}
 			
 			//frame's starting point for each frame.
-			int fx = x;
-			int fy = y;
+			
 			
 			//set boundaries to avoid seg faults.
-			if(y2 > imageHeight){
-				y2 = imageHeight - height; //This part may cause problems if the code has to be continuously looped for different fucntions.
+			if(y2 + height > imageHeight){
+				y2 = imageHeight - height;
 			}
-			if(x2 > imageWidth){
+			if(x2 + width > imageWidth){
 				x2 = imageWidth - width;
 			}
+			if(y2<0){
+				y2 = 0;
+			}
+			if(x2<0){
+				x2 = 0;
+			}
+			
+			if(y + height > imageHeight){
+				y = imageHeight - height;
+			}
+			if(x + width > imageWidth){
+				x = imageWidth - width;
+			}
+			if(y<0){
+				y = 0;
+			}
+			if(x<0){
+				x = 0;
+			}
+			
+			double fx = x;
+			double fy = y;
+			
+			int rfx = x;
+			int rfy = y;
+			
+			bool addx = true;
+			bool addy = true;
+			
+			
+			double g = 1;
+			
+			if((x2-x) != 0){
+				std::cout << y2 << " " << y << " " << x2 << " " << x;
+				g = (double)((y2 - y))/((x2 - x));
+				std::cout << g <<std::endl;
+			}else{
+				addx = false;
+			}
+			
+			if((y2-y)==0){
+				addy = false;
+			}
+			
+			bool yo = false;
+			
+			if (std::fabs(g) < 1.0){
+				yo= true;
+			}
+			
 			std::cout << "Creating a video sequence." << std::endl;
 			
+			//Allows the video to move vertically only or horizontally only.
+			
+			
 			//Create video sequence.
-			while(fx < x2 && fy < y2){
-					int v1 = 0;
+			while(fx != x2 || fy != y2 ){
+			
+			//Check if end-point has been passed.
+				if(x2<x){
+				//std::cout << "break fx<x2";
+					//std::cout << x2 << " " << x << " "<< fx << std::endl;
+					if(fx < x2){
+					//std::cout << x2 << " " << x << " "<< fx;
+						break;
+					}
+				}else{
+				//std::cout << "break fx>x2";
+					if(fx>x2){
+						break;
+					}
+				}
+				
+				if(y2<y){
+				//std::cout << "break fy<y2";
+				//std::cout << y2 << " " << y << " "<< fy << std::endl;
+					if(fy<y2){
+						break;
+					}
+				}else{
+				//std::cout << "break fy>y2";
+				//std::cout << y2 << " " << y << " "<< fy << std::endl;
+					if(fy>y2){
+						break;
+					}
+				}
+				
+					int v1 = 0; 
 					int h1 = 0;
 					
-					for(int i = fy; i< fy + height; i++){
+					for(int i = rfy; i< rfy + height; i++){
 						
-						for(int j = fx; j< fx + width ; j++){
+						for(int j = rfx; j< rfx + width ; j++){
 							
 							frame[v1][h1] = static_cast<unsigned char>(array[i][j]);
 							
 							h1++;
 							}
-							std::cout << h1 << std::endl;
 						h1 = 0;	
 						v1++;	
 					}
-					std::cout << v1 << std::endl;
 					v1 = 0;
 					
 					DLMARD001::FrameSequence::AddFrame(static_cast<unsigned char **>(frame));
@@ -77,8 +158,48 @@ void DLMARD001::FrameSequence::noneAddFrame(){
 					}
 					
 					//next frame
-					fx++;
-					fy++;
+					if(!yo){
+						if(addx){
+							if(x2<x){
+								fx--;
+								rfx--;
+							}else{
+								fx++;
+								rfx++;
+							}
+						}
+						
+						if(addy){
+							if(y2<y){
+									fy = fy - std::fabs(g);
+									rfy = std::round(fy);
+								}else{
+									fy = fy + std::fabs(g);
+									rfy = std::round(fy);
+								}
+							}
+					}else{
+					
+						if(addx){
+							if(x2<x){
+								fx = fx - (1/std::fabs(g));
+								rfx = std::round(fx);
+							}else{
+								fx = fx + (1/std::fabs(g));
+								rfx = std::round(fx);
+							}
+						}
+						if(addy){
+							if(y2<y){
+								fy--;
+								rfy--;
+								}
+							else{
+								fy++;
+								rfy++;	
+								}
+							}
+						}
 			}
 	
 	}
@@ -134,28 +255,100 @@ void DLMARD001::FrameSequence::invertAddFrame(){
 			}
 			
 			//frame's starting point for each frame.
-			int fx = x;
-			int fy = y;
+			
 			
 			//set boundaries to avoid seg faults.
-			if(y2 > imageHeight){
-				y2 = imageHeight - height; //This part may cause problems if the code has to be continuously looped for different fucntions.
+			if(y2 + height > imageHeight){
+				y2 = imageHeight - height;
 			}
-			if(x2 > imageWidth){
+			if(x2 + width > imageWidth){
 				x2 = imageWidth - width;
 			}
+			if(y2<0){
+				y2 = 0;
+			}
+			if(x2<0){
+				x2 = 0;
+			}
+			
+			if(y + height > imageHeight){
+				y = imageHeight - height;
+			}
+			if(x + width > imageWidth){
+				x = imageWidth - width;
+			}
+			if(y<0){
+				y = 0;
+			}
+			if(x<0){
+				x = 0;
+			}
+			
+			double fx = x;
+			double fy = y;
+			
+			int rfx = x;
+			int rfy = y;
+			
+			bool addx = true;
+			bool addy = true;
+			
+			
+			double g = 1;
+			
+			if((x2-x) != 0){
+				g = (double)((y2 - y))/((x2 - x));
+			}else{
+				addx = false;
+			}
+			
+			if((y2-y)==0){
+				addy = false;
+			}
+			
+			bool yo = false;
+			
+			if (std::fabs(g) < 1.0){
+				yo= true;
+			}
+			
 			std::cout << "Creating a video sequence." << std::endl;
 			
+			//Allows the video to move vertically only or horizontally only.
+			
+			
 			//Create video sequence.
-			while(fx < x2 && fy < y2){
-					int v1 = 0;
+			while(fx != x2 || fy != y2 ){
+			
+			//Check if end-point has been passed.
+				if(x2<x){
+					if(fx < x2){
+						break;
+					}
+				}else{
+					if(fx>x2){
+						break;
+					}
+				}
+				
+				if(y2<y){
+					if(fy<y2){
+						break;
+					}
+				}else{
+					if(fy>y2){
+						break;
+					}
+				}
+				
+					int v1 = 0; 
 					int h1 = 0;
 					
-					for(int i = fy; i< fy + height; i++){
+					for(int i = rfy; i< rfy + height; i++){
 						
-						for(int j = fx; j< fx + width ; j++){
+						for(int j = rfx; j< rfx + width ; j++){
 							
-							frame[v1][h1] =255 - static_cast<unsigned char>(array[i][j]);
+							frame[v1][h1] = 255 - static_cast<unsigned char>(array[i][j]);
 							
 							h1++;
 							}
@@ -175,10 +368,49 @@ void DLMARD001::FrameSequence::invertAddFrame(){
 					}
 					
 					//next frame
-					fx++;
-					fy++;
+					if(!yo){
+						if(addx){
+							if(x2<x){
+								fx--;
+								rfx--;
+							}else{
+								fx++;
+								rfx++;
+							}
+						}
+						
+						if(addy){
+							if(y2<y){
+									fy = fy - std::fabs(g);
+									rfy = std::round(fy);
+								}else{
+									fy = fy + std::fabs(g);
+									rfy = std::round(fy);
+								}
+							}
+					}else{
+					
+						if(addx){
+							if(x2<x){
+								fx = fx - (1/std::fabs(g));
+								rfx = std::round(fx);
+							}else{
+								fx = fx + (1/std::fabs(g));
+								rfx = std::round(fx);
+							}
+						}
+						if(addy){
+							if(y2<y){
+								fy--;
+								rfy--;
+								}
+							else{
+								fy++;
+								rfy++;	
+								}
+							}
+						}
 			}
-	
 	}
 
 void DLMARD001::FrameSequence::reverseExportFrames(std::string outputName){
@@ -258,7 +490,7 @@ void DLMARD001::FrameSequence::BuildArray(std::string filename){
 		previous = line;
 		getline(infile, line);
 		
-		std::cout << line << std::endl;
+		//std::cout << line << std::endl;
 	}
 	
 	getline(infile, line);//Go to next line with Binary data.
