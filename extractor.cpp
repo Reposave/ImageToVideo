@@ -73,8 +73,8 @@ int main (int argc, char *argv[])
     		
     	}else if(w[i] == "reverse"){
     		std::cout << "reverse"<< std::endl;
-    		//myVideoFrames.noneAddFrame();
-    		//myVideoFrames.reverseExportFrames(w[i+1]);
+    		myVideoFrames.noneAddFrame();
+    		myVideoFrames.reverseExportFrames(w[i+1]);
     		
     	}else if(w[i] == "none"){
     		std::cout << "none"<< std::endl;

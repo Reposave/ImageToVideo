@@ -33,3 +33,9 @@ run2:
 
 run3:
 	./extractor sloan_image.pgm -t 0 10 1 11 -s 640 480 -w invert invseq -w none sequence2
+	
+reverseSmall:
+	./extractor sloan_image.pgm -t 0 10 3 13 -s 640 480 -w reverse sequence3
+
+reverseLarge:
+	./extractor sloan_image.pgm -t 0 10 400 300 -s 640 480 -w reverse sequence3
